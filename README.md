@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # SkillBridge AI
 
 SkillBridge AI is an end-to-end app for students and freshers who want to understand how close they are to a target job role. The app now supports PDF resume upload, Firebase sign-in, and MongoDB-backed saved analyses in addition to skill extraction, matching, roadmap generation, and what-if simulation.
@@ -126,3 +127,6 @@ The frontend talks to the backend at `http://localhost:4000`.
 - PDF upload uses server-side parsing through the backend upload endpoint.
 
 The architecture breakdown lives in [docs/architecture.md](/D:/SkillBridge_Ai/docs/architecture.md).
+=======
+# SkillBridgeAi
+>>>>>>> c2f6f788dbe254f04ac13aacab96830e67395f57
