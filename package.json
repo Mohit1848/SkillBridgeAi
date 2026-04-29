@@ -1,0 +1,16 @@
+{
+  "name": "skillbridge-ai",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:frontend": "npm --workspace @skillbridge/frontend run dev",
+    "dev:backend": "npm --workspace @skillbridge/backend run dev",
+    "build": "npm run build --workspaces",
+    "typecheck": "npm run typecheck --workspaces"
+  }
+}
+
