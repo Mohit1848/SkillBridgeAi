@@ -1,116 +1,138 @@
-<<<<<<< HEAD
 # SkillBridge AI
 
-SkillBridge AI is an end-to-end app for students and freshers who want to understand how close they are to a target job role. The app now supports PDF resume upload, Firebase sign-in, and MongoDB-backed saved analyses in addition to skill extraction, matching, roadmap generation, and what-if simulation.
+SkillBridge AI is an end-to-end resume analysis and career readiness platform for students, freshers, and early-career job seekers. It starts with a polished landing UI, supports login or guest access, analyzes uploaded resumes against target job roles, and shows a dashboard with readiness score, skill gaps, course recommendations, roadmap, and what-if simulation.
 
-## What is included
+## What It Does
 
-- React frontend dashboard
-- Node.js + Express backend APIs
-- Shared TypeScript models
-- Seeded job and course data
-- PDF resume upload and parsing
-- Firebase authentication wiring
-- MongoDB persistence for signed-in analysis history
-- Matching engine using cosine-style overlap scoring
-- Skill-gap analyzer
-- Roadmap generator
-- Readiness scoring
-- What-if simulator
+- Shows a SkillBridge AI starting page with login / sign up access
+- Opens the dashboard after login or guest entry
+- Uploads PDF or TXT resumes
+- Extracts resume text and candidate skills
+- Compares skills against a selected target job
+- Calculates match score and readiness score
+- Finds critical and recommended skill gaps
+- Recommends courses for missing skills
+- Builds a week-by-week learning roadmap
+- Simulates score improvement after adding new skills
+- Saves analysis history for authenticated users when MongoDB is configured
+- Returns to the starting page after sign out
 
-## Monorepo layout
+## Current App Flow
+
+```text
+Landing page
+  -> Login / sign up or guest access
+  -> Dashboard
+  -> Upload resume or use manual profile
+  -> Select target job role
+  -> Backend extracts and normalizes skills
+  -> Backend matches profile against job requirements
+  -> Backend calculates scores, gaps, recommendations, and roadmap
+  -> Frontend displays the full report
+```
+
+## Monorepo Layout
 
 ```text
 SkillBridge_Ai/
 |-- apps/
-|   |-- backend/
-|   `-- frontend/
+|   |-- backend/      Express API, analysis engines, auth, persistence
+|   `-- frontend/     React + Vite user interface
 |-- docs/
-|   `-- architecture.md
+|   |-- architecture.md
+|   `-- PROJECT_FRAMEWORK.md
 |-- packages/
-|   |-- data/
-|   `-- shared/
+|   |-- data/         Seeded jobs, skills, aliases, courses
+|   `-- shared/       Shared TypeScript contracts
+|-- services/
+|-- tee/
+|-- utils/
+|-- server.js
 |-- package.json
 `-- tsconfig.base.json
 ```
 
-## Stack
+## Tech Stack
 
-- Frontend: React + Vite + TypeScript
-- Backend: Node.js + Express + TypeScript
-- Data layer: MongoDB-backed persistence plus shared seeded repositories
-- Auth/realtime target: Firebase client + Firebase Admin verification
-- Cloud target: Google Cloud friendly deployment split
+- Frontend: React, Vite, TypeScript, CSS
+- Backend: Node.js, Express, TypeScript
+- Resume parsing: `pdf-parse` for PDF uploads
+- Auth: Firebase client and Firebase Admin verification
+- Persistence: MongoDB for signed-in analysis history
+- Shared contracts: TypeScript models in `packages/shared`
+- Seed data: jobs, skills, aliases, and courses in `packages/data`
 
-## Main features
+## Analysis Framework
 
-### Student / fresher dashboard
+The analysis pipeline is explainable and rule-based.
 
-- Resume PDF or text upload
-- Manual profile editing
-- Job target selection
-- Readiness score
-- Skill-match score
-- Missing skills
-- Personalized roadmap
-- Course recommendations
-- What-if simulator
-
-### Backend / AI services
-
-- Resume parsing
-- Skill extraction
-- Matching engine
-- Gap analyzer
-- Roadmap engine
-- Recommendation engine
-- Score engine
-- Firebase token verification
-- MongoDB analysis persistence
-
-## Local run
-
-1. Install dependencies at the workspace root:
-
-```bash
-npm install
+```text
+Resume text
+  -> Skill extraction
+  -> Skill normalization
+  -> Target job matching
+  -> Gap detection
+  -> Readiness scoring
+  -> Course recommendation
+  -> Roadmap generation
+  -> Dashboard report
 ```
 
-2. Configure backend environment variables:
+### Resume Parsing
 
-```bash
-copy .env.example .env
+PDF and TXT uploads are handled by the backend. PDF files are parsed into text, while TXT files are read directly as UTF-8 text.
+
+### Skill Extraction
+
+The backend checks resume text against known skills and also reads comma-separated or line-separated skill lists. Skill aliases are normalized, for example:
+
+- `js` -> `javascript`
+- `ts` -> `typescript`
+- `node` -> `node.js`
+- `mongo` -> `mongodb`
+- `gcp` -> `google cloud`
+- `rest` -> `rest api`
+
+### Match Score
+
+The app compares candidate skills with the selected job's required and preferred skills using cosine similarity over skill presence vectors.
+
+```text
+match score = cosine similarity(candidate skills, job skills) * 100
 ```
 
-3. Configure frontend Firebase variables:
+### Readiness Score
 
-```bash
-copy apps\frontend\.env.example apps\frontend\.env
+The readiness score combines resume quality, skill fit, project strength, and learning progress.
+
+```text
+readiness score =
+  resume completeness * 0.20
+  + skill match * 0.45
+  + project strength * 0.20
+  + learning momentum * 0.15
 ```
 
-4. Fill in your values:
+Breakdown:
 
-- `MONGODB_URI` and `MONGODB_DB_NAME` for MongoDB
-- `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, and `FIREBASE_PRIVATE_KEY` for Firebase Admin on the backend
-- `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, `VITE_FIREBASE_PROJECT_ID`, and `VITE_FIREBASE_APP_ID` for Firebase web auth on the frontend
+- Resume completeness: name, headline, education, projects, certifications
+- Skill match: cosine similarity against the selected job
+- Project strength: based on number of projects
+- Learning momentum: covered gaps plus certifications
 
-5. Start the backend:
+### Gap Detection
 
-```bash
-npm run dev:backend
-```
+- Required job skills become critical gaps if missing.
+- Preferred job skills become recommended gaps if missing.
+- Covered skills are marked as already satisfied.
 
-6. Start the frontend in another terminal:
+### Recommendations and Roadmap
 
-```bash
-npm run dev:frontend
-```
+Missing skills are matched with the course catalog. The roadmap then turns missing skills into weekly learning goals. The timeline is at least 4 weeks and expands based on missing skills or the user's preferred timeline.
 
-7. Open the frontend at [http://localhost:5173](http://localhost:5173)
+Read the complete framework in [docs/PROJECT_FRAMEWORK.md](docs/PROJECT_FRAMEWORK.md).
 
-The frontend talks to the backend at `http://localhost:4000`.
-
-## API overview
+## Main API Routes
 
 - `GET /health`
 - `GET /api/auth/status`
@@ -120,12 +142,95 @@ The frontend talks to the backend at `http://localhost:4000`.
 - `POST /api/analyze`
 - `POST /api/simulate`
 
-## Notes
+## Local Setup
 
-- If MongoDB is not configured, analysis still works in guest mode but nothing is persisted.
-- If Firebase env vars are not configured, the frontend stays in guest mode and the backend skips token verification.
-- PDF upload uses server-side parsing through the backend upload endpoint.
+Install dependencies from the workspace root:
 
-The architecture breakdown lives in [docs/architecture.md](/D:/SkillBridge_Ai/docs/architecture.md).
-=======
+```bash
+npm install
+```
 
+Copy environment files:
+
+```bash
+copy .env.example .env
+copy apps\frontend\.env.example apps\frontend\.env
+```
+
+Configure backend values when needed:
+
+- `MONGODB_URI`
+- `MONGODB_DB_NAME`
+- `FIREBASE_PROJECT_ID`
+- `FIREBASE_CLIENT_EMAIL`
+- `FIREBASE_PRIVATE_KEY`
+
+Configure frontend Firebase values when needed:
+
+- `VITE_FIREBASE_API_KEY`
+- `VITE_FIREBASE_AUTH_DOMAIN`
+- `VITE_FIREBASE_PROJECT_ID`
+- `VITE_FIREBASE_APP_ID`
+- `VITE_DEVELOPER_EMAIL`
+
+## Run Locally
+
+Start the backend:
+
+```bash
+npm run dev:backend
+```
+
+Start the frontend in another terminal:
+
+```bash
+npm run dev:frontend
+```
+
+Open:
+
+[http://localhost:5173](http://localhost:5173)
+
+The frontend talks to the backend at:
+
+```text
+http://localhost:4000
+```
+
+## Build and Typecheck
+
+```bash
+npm run build
+npm run typecheck
+```
+
+## Guest Mode and Auth Notes
+
+- If Firebase is not configured, users can still open the dashboard in guest mode.
+- If MongoDB is not configured, analysis still works but history is not saved.
+- If Firebase and MongoDB are configured, signed-in users can save and view past analyses.
+
+## Important Files
+
+- Frontend entry: `apps/frontend/src/RootApp.tsx`
+- Landing UI: `apps/frontend/src/LandingPage.tsx`
+- Dashboard UI: `apps/frontend/src/UserWorkspace.tsx`
+- Frontend API client: `apps/frontend/src/api.ts`
+- Backend orchestrator: `apps/backend/src/orchestrators/analysisOrchestrator.ts`
+- Resume parser: `apps/backend/src/services/resumeUploadService.ts`
+- Skill parser: `apps/backend/src/engines/parserEngine.ts`
+- Matching engine: `apps/backend/src/engines/matchingEngine.ts`
+- Gap engine: `apps/backend/src/engines/gapEngine.ts`
+- Score engine: `apps/backend/src/engines/scoreEngine.ts`
+- Roadmap engine: `apps/backend/src/engines/roadmapEngine.ts`
+- Project framework: `docs/PROJECT_FRAMEWORK.md`
+
+## Future Improvements
+
+- Upload custom job descriptions
+- Add ATS formatting checks
+- Add grammar and impact-word feedback
+- Add deeper semantic resume parsing
+- Score project quality from project descriptions
+- Add LinkedIn/GitHub portfolio verification
+- Add admin tools for jobs, skills, and courses
