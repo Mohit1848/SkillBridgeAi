@@ -21,6 +21,7 @@ import {
 } from "./api";
 import DeveloperWorkspace from "./DeveloperWorkspace";
 import { developerEmail, firebaseAuth, firebaseConfigError, firebaseEnabled, googleProvider } from "./firebase";
+import LandingPage from "./LandingPage";
 import type { AppView } from "./uiTypes";
 import UserWorkspace from "./UserWorkspace";
 
@@ -61,7 +62,9 @@ function RootApp() {
   const initialView: AppView =
     typeof window !== "undefined" && searchParams?.get("view") === "developer"
       ? "developer"
-      : "user";
+      : typeof window !== "undefined" && searchParams?.get("view") === "dashboard"
+        ? "user"
+        : "landing";
   const [view, setView] = useState<AppView>(initialView);
   const [jobs, setJobs] = useState<JobPosting[]>([]);
   const [selectedJobId, setSelectedJobId] = useState("");
@@ -225,25 +228,28 @@ function RootApp() {
     }
   };
 
-  const handleSignIn = async () => {
+  const handleSignIn = async (): Promise<boolean> => {
     if (!firebaseAuth || !googleProvider) {
       setError(firebaseConfigError);
-      return;
+      return false;
     }
 
     setError("");
     try {
       await signInWithPopup(firebaseAuth, googleProvider);
+      return true;
     } catch (requestError) {
       const message = requestError instanceof Error ? requestError.message : "Google sign-in failed.";
       setError(
         `${message} If your Firebase config is correct, also make sure Google sign-in is enabled in the Firebase console and localhost is an authorized domain.`
       );
+      return false;
     }
   };
 
   const handleSignOut = async () => {
     if (!firebaseAuth) {
+      setView("landing");
       return;
     }
 
@@ -251,6 +257,7 @@ function RootApp() {
     setCurrentUser(null);
     setSavedAnalyses([]);
     setSuccess("Signed out.");
+    setView("landing");
   };
 
   const workspaceProps = {
@@ -284,6 +291,18 @@ function RootApp() {
     uploading,
     resumeText
   };
+
+  if (view === "landing") {
+    return (
+      <LandingPage
+        currentUser={currentUser}
+        error={error}
+        firebaseEnabled={firebaseEnabled}
+        handleSignIn={handleSignIn}
+        setView={setView}
+      />
+    );
+  }
 
   if (view === "developer" && !isDeveloperUser) {
     return <UserWorkspace {...workspaceProps} />;

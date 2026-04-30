@@ -8,7 +8,7 @@ import type {
 } from "@skillbridge/shared";
 import type { User } from "firebase/auth";
 
-export type AppView = "user" | "developer";
+export type AppView = "landing" | "user" | "developer";
 
 export interface WorkspaceProps {
   analysis: AnalysisResponse | null;
@@ -23,7 +23,7 @@ export interface WorkspaceProps {
   handleManualInputChange: (
     field: keyof ManualProfileInput
   ) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  handleSignIn: () => Promise<void>;
+  handleSignIn: () => Promise<boolean>;
   handleSignOut: () => Promise<void>;
   handleSimulate: () => Promise<void>;
   jobs: JobPosting[];

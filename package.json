@@ -9,8 +9,8 @@
   "scripts": {
     "dev:frontend": "npm --workspace @skillbridge/frontend run dev",
     "dev:backend": "npm --workspace @skillbridge/backend run dev",
+    "dev:resume-analyzer": "node server.js",
     "build": "npm run build --workspaces",
     "typecheck": "npm run typecheck --workspaces"
   }
 }
-

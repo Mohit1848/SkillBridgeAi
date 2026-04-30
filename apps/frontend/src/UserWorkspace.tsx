@@ -25,8 +25,9 @@ function UserWorkspace({
     <div className="user-shell">
       <header className="marketing-nav">
         <div className="brand-lockup">
-          <div className="brand-mark">SB</div>
-          <span>SkillBridge AI</span>
+          <span>
+            Skill<span>Bridge</span> AI
+          </span>
         </div>
         <nav className="marketing-links">
           <a href="#resume-check">Resume</a>
@@ -40,7 +41,12 @@ function UserWorkspace({
             currentUser ? (
               <>
                 <span className="nav-note">{currentUser.displayName ?? currentUser.email}</span>
-                <button className="nav-button ghost" onClick={() => void handleSignOut()}>
+                <button
+                  className="nav-button ghost"
+                  onClick={() => {
+                    void handleSignOut().then(() => setView("landing"));
+                  }}
+                >
                   Log out
                 </button>
                 {isDeveloperUser ? (

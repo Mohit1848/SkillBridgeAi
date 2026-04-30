@@ -128,5 +128,4 @@ The frontend talks to the backend at `http://localhost:4000`.
 
 The architecture breakdown lives in [docs/architecture.md](/D:/SkillBridge_Ai/docs/architecture.md).
 =======
-# SkillBridgeAi
->>>>>>> c2f6f788dbe254f04ac13aacab96830e67395f57
+
