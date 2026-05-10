@@ -2,6 +2,13 @@
 
 SkillBridge AI is an end-to-end resume analysis and career readiness platform for students, freshers, and early-career job seekers. It starts with a polished landing UI, supports login or guest access, analyzes uploaded resumes against target job roles, and shows a dashboard with readiness score, skill gaps, course recommendations, roadmap, and what-if simulation.
 
+## Live Demo
+
+- Website: [https://frontend-nu-weld-33.vercel.app](https://frontend-nu-weld-33.vercel.app)
+- Backend API: [https://backend-nine-kappa-98.vercel.app](https://backend-nine-kappa-98.vercel.app)
+
+Note: Google login requires the Vercel frontend domain to be added in Firebase Authentication authorized domains.
+
 ## What It Does
 
 - Shows a SkillBridge AI starting page with login / sign up access
