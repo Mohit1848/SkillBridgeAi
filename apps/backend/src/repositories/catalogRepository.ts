@@ -1,4 +1,6 @@
-import { courses, jobs, knownSkills, skillAliases } from "@skillbridge/data";
+import { courses } from "../data/courses.js";
+import { jobs } from "../data/jobs.js";
+import { knownSkills, skillAliases } from "../data/skills.js";
 import type { CourseCatalog, JobCatalog, SkillCatalog } from "../contracts/catalogs.js";
 
 export const jobCatalog: JobCatalog = {

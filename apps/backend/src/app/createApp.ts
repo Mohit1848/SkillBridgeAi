@@ -9,7 +9,14 @@ export const createApp = () => {
 
   app.use(
     cors({
-      origin: env.corsOrigins
+      origin: (origin, callback) => {
+        if (!origin || env.corsOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
+          callback(null, true);
+          return;
+        }
+
+        callback(new Error("Origin is not allowed by CORS."));
+      }
     })
   );
   app.use(express.json({ limit: "2mb" }));
