@@ -9,7 +9,7 @@ export const createApp = () => {
 
   app.use(
     cors({
-      origin: env.corsOrigin
+      origin: env.corsOrigins
     })
   );
   app.use(express.json({ limit: "2mb" }));

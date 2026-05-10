@@ -14,7 +14,10 @@ export const env = {
   firebaseProjectId: process.env.FIREBASE_PROJECT_ID ?? "",
   firebaseClientEmail: process.env.FIREBASE_CLIENT_EMAIL ?? "",
   firebasePrivateKey: readMultiline(process.env.FIREBASE_PRIVATE_KEY),
-  corsOrigin: process.env.CORS_ORIGIN ?? "http://localhost:5173"
+  corsOrigins: (process.env.CORS_ORIGIN ?? process.env.FRONTEND_ORIGIN ?? "http://localhost:5173")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean)
 };
 
 export const flags = {

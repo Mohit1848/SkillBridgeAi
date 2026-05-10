@@ -204,6 +204,125 @@ npm run build
 npm run typecheck
 ```
 
+## Vercel Deployment Plan
+
+Recommended deployment: use two Vercel projects from the same GitHub repository.
+
+```text
+Project 1: SkillBridge frontend
+Root Directory: apps/frontend
+
+Project 2: SkillBridge backend
+Root Directory: apps/backend
+```
+
+This keeps the React/Vite frontend and Express API backend independently configurable.
+
+### 1. Frontend Project on Vercel
+
+Create a Vercel project with:
+
+```text
+Root Directory: apps/frontend
+Framework Preset: Vite
+Build Command: npm run build
+Output Directory: dist
+```
+
+Frontend environment variables:
+
+```text
+VITE_API_BASE_URL=https://your-backend-vercel-url.vercel.app
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_APP_ID=your_firebase_app_id
+VITE_DEVELOPER_EMAIL=your_developer_email
+```
+
+The frontend API client uses `VITE_API_BASE_URL` in production and falls back to `http://localhost:4000` for local development.
+
+Expected production frontend URL:
+
+```text
+https://your-frontend-project.vercel.app
+```
+
+### 2. Backend Project on Vercel
+
+Create a second Vercel project with:
+
+```text
+Root Directory: apps/backend
+Framework Preset: Other
+Build Command: npm run build
+Output Directory: leave empty
+```
+
+Backend environment variables:
+
+```text
+MONGODB_URI=your_mongodb_connection_string
+MONGODB_DB_NAME=your_database_name
+FIREBASE_PROJECT_ID=your_firebase_project_id
+FIREBASE_CLIENT_EMAIL=your_firebase_admin_client_email
+FIREBASE_PRIVATE_KEY=your_firebase_admin_private_key
+FRONTEND_ORIGIN=https://your-frontend-project.vercel.app
+```
+
+The backend includes a Vercel serverless entry at `apps/backend/api/index.ts` and deployment config at `apps/backend/vercel.json`.
+
+Expected production backend URL:
+
+```text
+https://your-backend-project.vercel.app
+```
+
+### 3. Firebase Production Setup
+
+In Firebase Console:
+
+1. Open Authentication.
+2. Enable Google sign-in.
+3. Add authorized domains:
+   - `localhost`
+   - `your-frontend-project.vercel.app`
+
+If the Vercel domain is not authorized, Google login can fail in production.
+
+### 4. MongoDB Production Setup
+
+If using MongoDB Atlas:
+
+1. Create or select a production cluster.
+2. Add the production connection string to Vercel as `MONGODB_URI`.
+3. Set `MONGODB_DB_NAME`.
+4. Configure Network Access for the deployment environment.
+5. Test signed-in analysis saving after deployment.
+
+### 5. Production Verification Checklist
+
+After deployment, verify:
+
+- Landing page loads
+- Login / sign up works
+- Sign out returns to the starting page
+- Target jobs load from backend
+- PDF/TXT resume upload works
+- Resume analysis returns readiness score
+- Skill gaps display correctly
+- Course recommendations display
+- Roadmap displays
+- What-if simulator works
+- Signed-in analysis history saves and loads
+
+### 6. Suggested Production URLs
+
+```text
+Frontend: https://skillbridge-ai.vercel.app
+Backend:  https://skillbridge-api.vercel.app
+```
+
 ## Guest Mode and Auth Notes
 
 - If Firebase is not configured, users can still open the dashboard in guest mode.
